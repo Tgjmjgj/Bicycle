@@ -24,7 +24,8 @@ class UserController
             // Получаем данные из формы
             $name = $_POST['name'];
             $email = $_POST['email'];
-            $password = $_POST['password'];
+            $password = $_POST['password1'];
+            $password = $_POST['password2'];
 			$phone = $_POST['phone'];
 			$address = $_POST['address'];
 
@@ -38,7 +39,7 @@ class UserController
             if (!User::checkEmail($email)) {
                 $errors[] = 'Неправильный email';
             }
-            if (!User::checkPassword($password)) {
+            if (!User::checkPassword($password1, $password2)) {
                 $errors[] = 'Пароль не должен быть короче 6-ти символов';
             }
             if (User::checkEmailExists($email)) {
@@ -51,7 +52,11 @@ class UserController
             if ($errors == false) {
                 // Если ошибок нет
                 // Регистрируем пользователя
-                $result = User::register($name, $email, $password, $phone, $address);
+                $result = User::register($name, $email, $password1, $phone, $address);
+                $userId = User::checkUserData($email, $password1);
+                $role = User::auth($userId);
+
+                header('Location: /');
             }
         }
 
@@ -78,14 +83,6 @@ class UserController
 
             // Флаг ошибок
             $errors = false;
-
-            // Валидация полей
-            if (!User::checkEmail($email)) {
-                $errors[] = 'Неправильный email';
-            }
-            if (!User::checkPassword($password)) {
-                $errors[] = 'Пароль не должен быть короче 6-ти символов';
-            }
 
             // Проверяем существует ли пользователь
             $userId = User::checkUserData($email, $password);

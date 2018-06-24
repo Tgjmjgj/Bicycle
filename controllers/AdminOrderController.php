@@ -39,14 +39,13 @@ class AdminOrderController extends AdminBase
         if (isset($_POST['submit'])) {
             // Если форма отправлена   
             // Получаем данные из формы
-            $userName = $_POST['userName'];
-            $userPhone = $_POST['userPhone'];
+            $userId = $_POST['userId'];
+            $orderAddress = $_POST['orderAddress'];
             $userComment = $_POST['userComment'];
-            $userAddress = $_POST['userAddress'];
             $date = $_POST['date'];
             $status = $_POST['status'];
             // Сохраняем изменения
-            Order::updateOrderById($id, $userName, $userPhone, $userComment, $userAddress, $date, $status);
+            Order::updateOrderById($id, $userId, $orderAddress, $userComment, $date, $status);
 
             // Перенаправляем пользователя на страницу управлениями заказами
             header("Location: /admin/order/view/$id");

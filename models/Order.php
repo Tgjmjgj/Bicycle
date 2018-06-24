@@ -16,20 +16,21 @@ class Order
      * @param array $products <p>Массив с товарами</p>
      * @return boolean <p>Результат выполнения метода</p>
      */
-    public static function save($userId, $userComment, $products)
+    public static function save($userId, $userComment, $orderAddress, $products)
     {
         // Соединение с БД
         $db = Db::getConnection();
 
         // Текст запроса к БД
-        $sql = 'INSERT INTO product_order (user_comment, user_id, products) '
-                . 'VALUES (:user_comment, :user_id, :products)';
+        $sql = 'INSERT INTO product_order (user_id, user_comment, order_address, products) '
+                . 'VALUES (:user_id, :user_comment, :order_address, :products)';
 
         $products = json_encode($products);
 
         $result = $db->prepare($sql);
-        $result->bindParam(':user_comment', $userComment, PDO::PARAM_STR);
         $result->bindParam(':user_id', $userId, PDO::PARAM_STR);
+        $result->bindParam(':user_comment', $userComment, PDO::PARAM_STR);
+        $result->bindParam(':order_address', $orderAddress, PDO::PARAM_STR);
         $result->bindParam(':products', $products, PDO::PARAM_STR);
 
         return $result->execute();
@@ -45,12 +46,14 @@ class Order
         $db = Db::getConnection();
 
         // Получение и возврат результатов
-        $result = $db->query('SELECT id, user_id, date, status FROM product_order ORDER BY id DESC');
+        $result = $db->query('SELECT id, user_id, order_address, date, status '
+                            .'FROM product_order ORDER BY id DESC');
         $ordersList = array();
         $i = 0;
         while ($row = $result->fetch()) {
             $ordersList[$i]['id'] = $row['id'];
             $ordersList[$i]['user_id'] = $row['user_id'];;
+            $ordersList[$i]['order_address'] = $row['order_address'];;
             $ordersList[$i]['date'] = $row['date'];
             $ordersList[$i]['status'] = $row['status'];
             $i++;
@@ -138,6 +141,7 @@ class Order
         while ($row = $result->fetch()) {
             $ordersList[$i]['id'] = $row['id'];
             $ordersList[$i]['user_id'] = $row['user_id'];
+            $ordersList[$i]['order_address'] = $row['order_address'];
             $ordersList[$i]['user_comment'] = $row['user_comment'];	
             $ordersList[$i]['products'] = $row['products'];
             $ordersList[$i]['date'] = $row['date'];
@@ -158,7 +162,7 @@ class Order
      * @param integer $status <p>Статус <i>(включено "1", выключено "0")</i></p>
      * @return boolean <p>Результат выполнения метода</p>
      */
-    public static function updateOrderById($id, $userId, $userComment, $date, $status)
+    public static function updateOrderById($id, $userId, $orderAddress, $userComment, $date, $status)
     {
         // Соединение с БД
         $db = Db::getConnection();
@@ -168,6 +172,7 @@ class Order
             SET 
                 user_id = :user_id, 
                 user_comment = :user_comment,
+                order_address = :order_address
                 date = :date, 
                 status = :status 
             WHERE id = :id";
@@ -176,6 +181,7 @@ class Order
         $result->bindParam(':id', $id, PDO::PARAM_INT);
         $result->bindParam(':user_id', $userId, PDO::PARAM_STR);
         $result->bindParam(':user_comment', $userComment, PDO::PARAM_STR);
+        $result->bindParam(':order_address', $orderAddress, PDO::PARAM_STR);
         $result->bindParam(':date', $date, PDO::PARAM_STR);
         $result->bindParam(':status', $status, PDO::PARAM_INT);
         return $result->execute();

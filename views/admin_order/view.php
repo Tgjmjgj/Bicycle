@@ -28,33 +28,17 @@
                     <td><?php echo $order['id']; ?></td>
                 </tr>
                 <tr>
-                    <td>Имя клиента</td>
-                    <td><?php echo $order['user_name']; ?></td>
+                    <td>ID покупателя</td>
+                    <td><?php echo $order['user_id']; ?></td>
                 </tr>
                 <tr>
-                    <td>Телефон клиента</td>
-                    <td><?php echo $order['user_phone']; ?></td>
+                    <td>Адрес доставки</td>
+                    <td><?php echo $order['order_address']; ?></td>
                 </tr>
                 <tr>
                     <td>Комментарий клиента</td>
                     <td><?php echo $order['user_comment']; ?></td>
                 </tr>
-                <?php if ($order['user_id'] != 0): ?>
-                
-                <tr>
-                        <td>ID клиента</td> 
-                        <td><?php echo $order['user_id']; ?></td>
-                </tr>
-
-
-                <!--
-                    <tr>
-                        <td>ID клиента</td> 
-                        <td><?php echo $order['user_id']; ?></td>
-                    </tr>
-                -->
-                
-                <?php endif; ?>
                 <tr>
                     <td><b>Статус заказа</b></td>
                     <td><?php echo Order::getStatusText($order['status']); ?></td>

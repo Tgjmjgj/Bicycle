@@ -23,19 +23,15 @@
                 <div class="login-form">
                     <form action="#" method="post">
 
-                        <p>Имя клиента</p>
-                        <input type="text" name="userName" placeholder="" 
-                        value="<?php echo $order['user_name']; ?>">
+                        <p>ID клиента</p>
+                        <input type="text" name="userId" placeholder="" 
+                        value="<?php echo $order['user_id']; ?>">
 
-                        <p>Телефон клиента</p>
-                        <input type="text" name="userPhone" placeholder="" maxlength="11" value="<?php echo $order['user_phone']; ?>">
+                        <p>Адрес доставки</p>
+                        <input type="text" name="orderAddress" placeholder="" value="<?php echo $order['order_address']; ?>">
 
                         <p>Комментарий клиента</p>
                         <input type="text" name="userComment" placeholder="" value="<?php echo $order['user_comment']; ?>">
-						
-						<p>Адрес клиента</p>
-                        <input type="text" name="userAddress" placeholder="" value="<?php echo $order['user_address']; ?>">
-						
 
                         <p>Дата оформления заказа</p>
                         <input type="text" name="date" placeholder="" value="<?php echo $order['date']; ?>">

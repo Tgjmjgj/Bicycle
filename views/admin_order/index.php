@@ -21,8 +21,8 @@
             <table class="table-bordered table-striped table">
                 <tr>
                     <th>ID заказа</th>
-                    <th>Имя покупателя</th>
-                    <th>Телефон покупателя</th>
+                    <th>ID покупателя</th>
+                    <th>Адрес доставки</th>
                     <th>Дата оформления</th>
                     <th>Статус</th>
                     <th></th>
@@ -36,8 +36,8 @@
                                 <?php echo $order['id']; ?>
                             </a>
                         </td>
-                        <td><?php echo $order['user_name']; ?></td>
-                        <td><?php echo $order['user_phone']; ?></td>
+                        <td><?php echo $order['user_id']; ?></td>
+                        <td><?php echo $order['order_address']; ?></td>
                         <td><?php echo $order['date']; ?></td>
                         <td><?php echo Order::getStatusText($order['status']); ?></td>    
                         <td><a href="/admin/order/view/<?php echo $order['id']; ?>" title="Смотреть"><i class="fa fa-eye"></i></a></td>

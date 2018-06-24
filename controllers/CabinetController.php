@@ -33,10 +33,12 @@ class CabinetController
 
         // Получаем информацию о пользователе из БД
         $user = User::getUserById($userId);
-
         // Заполняем переменные для полей формы
         $name = $user['name'];
         $password = $user['password'];
+        $email = $user['email'];
+        $phone = $user['phone'];
+        $address = $user['address'];
 
         // Флаг результата
         $result = false;
@@ -46,7 +48,11 @@ class CabinetController
             // Если форма отправлена
             // Получаем данные из формы редактирования
             $name = $_POST['name'];
-            $password = $_POST['password'];
+            $password1 = $_POST['password1'];
+            $password2 = $_POST['password2'];
+            $email = $_POST['email'];
+            $phone = $_POST['phone'];
+            $address = $_POST['address'];
 
             // Флаг ошибок
             $errors = false;
@@ -55,13 +61,19 @@ class CabinetController
             if (!User::checkName($name)) {
                 $errors[] = 'Имя не должно быть короче 2-х символов';
             }
-            if (!User::checkPassword($password)) {
+            if (!User::checkPassword($password1, $password2)) {
                 $errors[] = 'Пароль не должен быть короче 6-ти символов';
+            }
+            if (!User::checkEmail($email)) {
+                $errors[] = 'Неправильный email';
+            }
+            if (User::checkPhone($phone)) {
+                $errors[] = 'Некорректный телефонный номер';
             }
 
             if ($errors == false) {
                 // Если ошибок нет, сохраняет изменения профиля
-                $result = User::edit($userId, $name, $password);
+                $result = User::edit($userId, $name, $email, $password1, $phone, $address);
             }
         }
 

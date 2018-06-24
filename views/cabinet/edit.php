@@ -24,7 +24,15 @@
                             <input type="text" name="name" placeholder="Имя" value="<?php echo $name; ?>"/>
                             
                             <p>Пароль:</p>
-                            <input type="password" name="password" placeholder="Пароль" value="<?php echo $password; ?>"/>
+                            <input type="password" name="password1" placeholder="Пароль" value="<?php echo $password; ?>"/>
+                            <p>Повтор пароля:</p>
+                            <input type="password" name="password2" placeholder="Пароль" value="<?php echo $password; ?>"/>
+                            <p>Почта:</p>
+                            <input type="text" name="email" placeholder="Почта" value="<?php echo $email; ?>"/>
+                            <p>Телефон:</p>
+                            <input type="text" name="phone" placeholder="Телефон" value="<?php echo $phone; ?>"/>
+                            <p>Адрес:</p>
+                            <input type="text" name="address" placeholder="Адрес" value="<?php echo $address; ?>"/>
                             <br/>
                             <input type="submit" name="submit" class="btn btn-default" value="Сохранить" />
                         </form>

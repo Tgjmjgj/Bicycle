@@ -17,10 +17,10 @@ abstract class AdminBase
         $userId = User::checkLogged();
 
         // Получаем информацию о текущем пользователе
-        $user = User::getUserById($userId);
+        $role = User::getUserRoleById($userId);
 
         // Если роль текущего пользователя "admin", пускаем его в админпанель
-        if ($user['role'] == 'admin') {
+        if ($role == 'admin') {
             return true;
         }
 

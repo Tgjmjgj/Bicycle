@@ -13,22 +13,23 @@ class User
      * @param string $password <p>Пароль</p>
      * @return boolean <p>Результат выполнения метода</p>
      */
-    public static function register($name, $email, $password, $address, $phone)
+    public static function register($name, $email, $password, $phone, $address, $role='user')
     {
         // Соединение с БД
         $db = Db::getConnection();
 
         // Текст запроса к БД
-        $sql = 'INSERT INTO user (name, email, password, $address, $phone) '
-                . 'VALUES (:name, :email, :password, :address, :phone)';
+        $sql = "INSERT INTO user (name, email, password, phone, address, role) "
+                . "VALUES (:name, :email, :password, :phone, :address, :role)";
 
         // Получение и возврат результатов. Используется подготовленный запрос
         $result = $db->prepare($sql);
         $result->bindParam(':name', $name, PDO::PARAM_STR);
         $result->bindParam(':email', $email, PDO::PARAM_STR);
         $result->bindParam(':password', $password, PDO::PARAM_STR);
-        $result->bindParam(':address', $address, PDO::PARAM_STR);
         $result->bindParam(':phone', $phone, PDO::PARAM_STR);
+        $result->bindParam(':address', $address, PDO::PARAM_STR);
+        $result->bindParam(':role', $role, PDO::PARAM_STR);
         return $result->execute();
     }
 
@@ -39,20 +40,22 @@ class User
      * @param string $password <p>Пароль</p>
      * @return boolean <p>Результат выполнения метода</p>
      */
-    public static function edit($id, $name, $password, $address, $phone)
+    public static function edit($id, $name, $email, $password, $phone, $address)
     {
         // Соединение с БД
         $db = Db::getConnection();
 
         // Текст запроса к БД
         $sql = "UPDATE user 
-            SET name = :name, password = :password, address = :address, phone = :phone
+            SET name = :name, password = :password,
+            address = :address, phone = :phone, email = :email
             WHERE id = :id";
 
         // Получение и возврат результатов. Используется подготовленный запрос
         $result = $db->prepare($sql);
         $result->bindParam(':id', $id, PDO::PARAM_INT);
         $result->bindParam(':name', $name, PDO::PARAM_STR);
+        $result->bindParam(':email', $email, PDO::PARAM_STR);
         $result->bindParam(':password', $password, PDO::PARAM_STR);
         $result->bindParam(':address', $address, PDO::PARAM_STR);
         $result->bindParam(':phone', $phone, PDO::PARAM_STR);
@@ -158,7 +161,7 @@ class User
      */
     public static function checkPhone($phone)
     {
-        if (strlen($phone) >= 7) {
+        if (strlen($phone) <= 7) {
             return true;
         }
         return false;
@@ -169,9 +172,9 @@ class User
      * @param string $password <p>Пароль</p>
      * @return boolean <p>Результат выполнения метода</p>
      */
-    public static function checkPassword($password)
+    public static function checkPassword($password1, $password2)
     {
-        if (strlen($password) >= 6) {
+        if (strlen($password1) >= 6 && $password1 === $password2) {
             return true;
         }
         return false;
@@ -224,7 +227,7 @@ class User
         $db = Db::getConnection();
 
         // Текст запроса к БД
-        $sql = 'SELECT * FROM user WHERE id = :id';
+        $sql = 'SELECT name, email, password, phone, address FROM user WHERE id = :id';
 
         // Получение и возврат результатов. Используется подготовленный запрос
         $result = $db->prepare($sql);
@@ -235,6 +238,25 @@ class User
         $result->execute();
 
         return $result->fetch();
+    }
+
+    public static function getUserRoleById($id)
+    {
+        // Соединение с БД
+        $db = Db::getConnection();
+
+        // Текст запроса к БД
+        $sql = 'SELECT role FROM user WHERE id = :id';
+
+        // Получение и возврат результатов. Используется подготовленный запрос
+        $result = $db->prepare($sql);
+        $result->bindParam(':id', $id, PDO::PARAM_INT);
+
+        // Указываем, что хотим получить данные в виде массива
+        $result->setFetchMode(PDO::FETCH_ASSOC);
+        $result->execute();
+
+        return $result->fetch()['role'];
     }
 	
 	public static function getUserIdByEmail($email)

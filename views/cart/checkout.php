@@ -49,22 +49,31 @@
                                 <div class="login-form">
                                     <form action="#" method="post">
 
-                                        <p>Ваше имя</p>
-                                        <input type="text" name="userName" placeholder="" value="<?php echo $userName; ?>"/>
+                                        <?php if (User::isGuest()): ?>
+                                            <p>Ваше имя</p>
+                                            <input type="text" name="userName" placeholder="" value="<?php echo $userName; ?>"/>
 
-                                        <p>Электронная почта</p>
-                                        <input type="text" name="userEmail" placeholder="" value="<?php echo $userEmail; ?>"/>
-										
-                                        <p>Номер телефона</p>
-                                        <input type="text" name="userPhone" maxlength="11" placeholder="" value="<?php echo $userPhone; ?>"/>
+                                            <p>Электронная почта</p>
+                                            <input type="text" name="userEmail" placeholder="" value="<?php echo $userEmail; ?>"/>
+                                            
+                                            <p>Номер телефона</p>
+                                            <input type="text" name="userPhone" maxlength="13" placeholder="" value="<?php echo $userPhone; ?>"/>
+                                        <?php endif; ?>
 
                                         <p>Комментарий к заказу</p>
                                         <input type="text" name="userComment" placeholder="Сообщение" value="<?php echo $userComment; ?>"/>
-
                                         <p>Адрес доставки</p>
-                                        <input type="text" name="userAddress" placeholder="Сообщение" value="<?php echo $userAddress; ?>"/>
-
+                                        <input type="text" name="orderAddress" placeholder="Адрес" value="<?php echo $userAddress; ?>"/>
                                         <br/>
+                                        
+                                        <?php if (User::isGuest()): ?>
+                                            <p>Впервые на нашем сайте?</p>
+                                            <p>Вы можете сохранить свои данные для дальнейших покупок.</p>
+                                            <p>Всё, что вам нужно, это придумать пароль для доступа к своему профилю.</p>
+                                            <input type="text" name="password1" placeholder="******" />
+                                            <input type="text" name="password2" placeholder="******" />
+                                        <?php endif; ?>
+
                                         <br/>
                                         <input type="submit" name="submit" class="btn btn-default" value="Оформить" />
                                     </form>

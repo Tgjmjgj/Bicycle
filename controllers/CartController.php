@@ -113,57 +113,76 @@ class CartController
 		$userEmail = false;
         $userPhone = false;
         $userComment = false;
-        $userAddress = false;
+        $orderAddress = false;
 		
 
         // Статус успешного оформления заказа
         $result = false;
+        $userAddress = false;
+        $userId = false;
 
         // Проверяем является ли пользователь гостем
-        if (!User::isGuest()) {
+        if (!User::isGuest())
+        {
             // Если пользователь не гость
             // Получаем информацию о пользователе из БД
             $userId = User::checkLogged();
-            $user = User::getUserById($userId);
-            $userName = $user['name'];
-		}
+            $userAddress = User::getUserById($userId)['address'];
+        }
+        
 
         // Обработка формы
         if (isset($_POST['submit'])) {
+
             // Если форма отправлена
             // Получаем данные из формы
-            $userName = $_POST['userName'];
-			$userEmail = $_POST['userEmail'];
-            $userPhone = $_POST['userPhone'];
             $userComment = $_POST['userComment'];
-            $userAddress = $_POST['userAddress'];
-			
-			if (!User::checkEmailExists($userEmail))
-			{
-				User::register($userName, $userEmail, '' , $userAddress, $userPhone);
-			}
-			$userId = User::getUserIdByEmail($userEmail);
-			
-            // Флаг ошибок
+            $orderAddress = $_POST['orderAddress'];
+
             $errors = false;
 
-            // Валидация полей
-            if (!User::checkName($userName)) {
-                $errors[] = 'Неправильное имя';
-            }
-            if (!User::checkPhone($userPhone)) {
-                $errors[] = 'Неправильный телефон';
-            }
-            if (!User::checkEmail($userEmail)) {
-                $errors[] = 'Неправильная почта';
+            if (User::isGuest())
+            {
+                $userName = $_POST['userName'];
+                $userEmail = $_POST['userEmail'];
+                $userPhone = $_POST['userPhone'];
+                $password1 = $_POST['password1'];
+                $password2 = $_POST['password2'];
+                $role = 'user';
+
+                if (!User::checkName($userName)) {
+                    $errors[] = 'Имя не должно быть короче 2-х символов';
+                }
+                if (!User::checkEmail($userEmail)) {
+                    $errors[] = 'Неправильный email';
+                }
+                if (User::checkPhone($userPhone)) {
+                    $errors[] = 'Некорректный телефонный номер';
+                }
+                if ($password1 === '') {
+                    $role = 'guest';
+                }
+                else if (!User::checkPassword($password1, $password2)) {
+                    $errors[] = 'Пароль не должен быть короче 6-ти символов';
+                }
+
+                if ($errors == false) {
+
+                    User::register($userName, $userEmail, $password1, $userPhone, $orderAddress, $role);
+                    $userId = User::checkUserData($userEmail, $password1);
+                    if ($role == 'user')
+                    {
+                        User::auth($userId);
+                    }
+                }
             }
 
             if ($errors == false) {
                 // Если ошибок нет
                 // Сохраняем заказ в базе данных
 				
-                $result = Order::save($userId, $userComment, $productsInCart);
-				var_dump($result);
+                $result = Order::save($userId, $userComment, $orderAddress, $productsInCart);
+
 				//Обновляем свойство количество товаров на складе
 				Product::updateAvailability($productsInCart);
 				
@@ -173,31 +192,33 @@ class CartController
                     $adminEmail = 'bicycle.contacts.shop@gmail.com';
 					$today = date("Y-m-d H:i:s");
                
-			   $message = "Сообщение от ". $userName. ", проживающего по адресу ". $userAddress. PHP_EOL.  $userComment;
-                try {
-					$mail = new PHPMailer(true);
-					//$mail->isHTML(true);
-					$mail->CharSet = 'UTF-8';
-					$mail->isSMTP();
-					$mail->Host = 'smtp.mail.ru';
-					$mail->SMTPAuth = true;
-					$mail->Username = 'gruppa-803@mail.ru';
-					$mail->Password = '18092017@';
-					$mail->SMTPSecure = 'ssl';
-					$mail->Port = 465;
-					$mail->SMTPDebug = 0;
-					
-					$mail->setFrom('gruppa-803@mail.ru');
-					$mail->addAddress($adminEmail);
-					
-					$mail->Subject = 'Уведомление о заказе';
-					$mail->Body    = $message;
-					
-					$mail->send();
-				} catch (Exception $e) {
-					echo 'Message could not be sent. Mailer Error: ', $mail->ErrorInfo;
-				}
-                //$result = mail($adminEmail, $subject, $message, $from);
+			        $message = "Сообщение от ". $userName. ", проживающего по адресу ". $orderAddress. PHP_EOL.  $userComment;
+                    try 
+                    {
+                        $mail = new PHPMailer(true);
+                        //$mail->isHTML(true);
+                        $mail->CharSet = 'UTF-8';
+                        $mail->isSMTP();
+                        $mail->Host = 'smtp.mail.ru';
+                        $mail->SMTPAuth = true;
+                        $mail->Username = 'gruppa-803@mail.ru';
+                        $mail->Password = '18092017@';
+                        $mail->SMTPSecure = 'ssl';
+                        $mail->Port = 465;
+                        $mail->SMTPDebug = 0;
+                        
+                        $mail->setFrom('gruppa-803@mail.ru');
+                        $mail->addAddress($adminEmail);
+                        
+                        $mail->Subject = 'Уведомление о заказе';
+                        $mail->Body    = $message;
+                        
+                        $mail->send();
+                    } 
+                    catch (Exception $e) 
+                    {
+                        echo 'Message could not be sent. Mailer Error: ', $mail->ErrorInfo;
+                    }
 
                     // Очищаем корзину
                     Cart::clear();

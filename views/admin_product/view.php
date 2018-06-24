@@ -21,10 +21,7 @@
                 <tr>
                     <th>ID заказа</th>
                     <th>ID покупателя</th>
-                    <!-- <th>ID покупателя</th> -->
-                    <th>Имя заказчика</th>
-                    <th>Телефонный номер</th>
-                    <th>Адрес</th>
+                    <th>Адрес доставки</th>
                     <th>Комментарий пользователя</th>
                     <th style="min-width: 100px;">Товары</th>
                     <th style="width: 100px;">Дата</th>
@@ -34,14 +31,11 @@
                     <tr>
                         <td><?php echo $ord['id']; ?></td>
                         <td><?php echo $ord['user_id']; ?></td>
-                        <!-- <td><?php echo $ord['user_id']; ?></td> -->
-                        <td><?php echo $ord['user_name']; ?></td>
-                        <td><?php echo $ord['user_phone']; ?></td>
-                        <td><?php echo $ord['user_address']; ?></td>
+                        <td><?php echo $ord['order_address']; ?></td>
                         <td><?php echo $ord['user_comment']; ?></td>
                         <td><?php echo Product::transformProducts($ord['products']); ?></td>
                         <td><?php echo $ord['date']; ?></td>
-                       <td><?php echo Order::getStatusText($ord['status']); ?></td>
+                        <td><?php echo Order::getStatusText($ord['status']); ?></td>
                     </tr>
                 <?php endforeach; ?>
             </table>
